@@ -108,4 +108,4 @@ MBFC_CREDIBILITY = {
 # Some scraping settings for our program
 MAX_CHARS = 10000
 REQUEST_TIMEOUT = 10
-USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+USER_AGENT = 'PoliScraper/1.0 (+https://github.com/CollinF777/PoliScraper)'
