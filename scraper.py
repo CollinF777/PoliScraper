@@ -57,7 +57,7 @@ def get_bias_cred(url):
         return {
             'bias': bias_rating['bias'],
             'rating': bias_rating['rating'],
-            'credibility': bias_rating['credibility'],
+            'credibility': cred,
             'source': "AllSides and MBFC"
         }
     # If it cant be found then theres nothing to return
