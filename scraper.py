@@ -3,6 +3,7 @@ from bs4 import BeautifulSoup
 import re
 from urllib.parse import urlparse
 from config import MAX_CHARS, REQUEST_TIMEOUT, USER_AGENT, RATINGS, MBFC_CREDIBILITY
+from urllib.robotparser import RobotFileParser
 
 # Method to get the domain from a given url
 def getDomain(url):
@@ -10,6 +11,36 @@ def getDomain(url):
     domain = parsed_url.netloc.replace("www.","")
     return domain
 
+# Checks for a robots.txt to file to make sure we can scrape
+def can_scrape(url):
+    try:
+        parsed_url = urlparse(url)
+
+        # Construct robots.txt URL, if you understand this ignore large comment
+        """
+        To construct a websites robots.txt URL you must combine a few things
+        First you need the scheme which like http or https
+        Then you need the netlock which is the domain with a subdomain like www.colliniscool.com
+        After you add the path which is robots.txt
+        """
+        robots_url = parsed_url.scheme + "://" + parsed_url.netloc + "/robots.txt"
+
+        # Create the robot parser
+        robots_parser = RobotFileParser()
+        robots_parser.set_url(robots_url)
+        robots_parser.read()
+
+        # Check if we are allowed to fetch the url, * is just so its generic
+        can_fetch = robots_parser.can_fetch("*",url)
+
+        if not can_fetch:
+            print(f"Warning for {url}: robots.txt does not allow scraping")
+
+        return can_fetch
+
+    except Exception as e:
+        print(f"No robots.txt for {url} proceeding as normal")
+        return True
 # Gets the bias rating from Allsides and credibility from MBFC
 def get_bias_cred(url):
     domain = getDomain(url)
@@ -74,6 +105,9 @@ def scrape_mutiple(websites):
     for website in websites:
             print(f"Scraping {website}")
 
+            # Check robots.txt for scraping permissions
+            if not can_scrape(website):
+                print(f"Skipping {website}: Robots.txt disallows scraping")
             bias_info = get_bias_cred(website)
 
             if bias_info is None:
