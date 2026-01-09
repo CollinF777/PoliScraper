@@ -121,7 +121,7 @@ def scrape_mutiple(websites):
             if text:
                 scraped_data[website] = {
                     'text': text,
-                    'bias': bias_info
+                    'bias_info': bias_info
                 }
                 print(f"Rating found for {website}: {bias_info['rating']} Credibility: {bias_info['credibility']}/10")
 
