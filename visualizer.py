@@ -2,16 +2,16 @@ import plotly.graph_objs as go
 
 # This created hover text for whenever you go over a data point
 def create_hover_text(result):
-    hover_text = f"<b>{result["name"]}</b></br>"
-    hover_text += f"Rating: {result["bias_rating"]}</br>"
-    hover_text += f"Known Bias: {result["known_bias"]}</br>"
-    hover_text += f"Calculated Bias: {result["calculated_bias"]}</br>"
-    hover_text += f"Credibility: {result["reliability"]}</br>"
-    hover_text += f"Total Keywords: {result["total_keywords"]}</br>"
-    hover_text += f"Left: {result["scores"]["left"]}</br>"
-    hover_text += f"Center: {result["scores"]["center"]}</br>"
-    hover_text += f"Right: {result["scores"]["right"]}</br>"
-    hover_text += f"Source: {result["source"]}</br>"
+    hover_text = f"<b>{result['name']}</b><br>"
+    hover_text += f"Rating: {result['bias_rating']}<br>"
+    hover_text += f"Known Bias: {result['known_bias']}<br>"
+    hover_text += f"Calculated Bias: {result['calculated_bias']}<br>"
+    hover_text += f"Credibility: {result['reliability']}<br>"
+    hover_text += f"Total Keywords: {result['total_keywords']}<br>"
+    hover_text += f"Left: {result['scores']['left']}<br>"
+    hover_text += f"Center: {result['scores']['center']}<br>"
+    hover_text += f"Right: {result['scores']['right']}<br>"
+    hover_text += f"Source: {result['source']}<br>"
     return hover_text
 
 """
@@ -47,14 +47,14 @@ def create_bias_chart(results):
                 cmin=-5, # Min color scale
                 cmax=5, # Max color scale
                 line=dict(width=2, color="white"), # Adds white border around marker
-                colorbar=dict(title="Calculated</br>Bias"), # Legend for color sclae
+                colorbar=dict(title="Calculated</br>Bias"), # Legend for color scale
                 symbol="circle", # Makes it a circle (duh)
             ),
             text=result["name"], # Makes label the website name
             textposition="top center", # Position label above the marker
             hovertext=create_hover_text(result), # Add hover info
             hoverinfo="text", # Only allow custom hover text
-            name=result["name"], # Legend name (this wont be shown due to showLegend but can be changed)
+            name=result["name"], # Legend name (this won't be shown due to showLegend but can be changed)
             showlegend=False
         ))
 
@@ -88,43 +88,46 @@ def create_bias_chart(results):
             )
         ))
 
-        # Adds vertical line at x=0 to display center
-        fig.add_vline(x=0, line_dash="dash", line_color="gray", opacity=0.5)
+    # Adds vertical line at x=0 to display center
+    fig.add_vline(x=0, line_dash="dash", line_color="gray", opacity=0.5)
 
-        # Background rectangles that shades each region
-        fig.add_vrect(x0=-5, x1=-1.5, fillcolor="blue", opacity=0.1, line_width=0)
-        fig.add_vrect(x0=-1.5, x1=1.5, fillcolor="purple", opacity=0.1, line_width=0)
-        fig.add_vrect(x0=1.5, x1=5, fillcolor="red", opacity=0.1, line_width=0)
+    # Background rectangles that shades each region
+    fig.add_vrect(x0=-5, x1=-1.5, fillcolor="blue", opacity=0.1, line_width=0)
+    fig.add_vrect(x0=-1.5, x1=1.5, fillcolor="purple", opacity=0.1, line_width=0)
+    fig.add_vrect(x0=1.5, x1=5, fillcolor="red", opacity=0.1, line_width=0)
 
-        # Configure overall chart layout
-        fig.update_layout(
-            title="Political Bias Comparison: Known vs Calculated </br><sub>Known bias from Allsides Media Bias Ratings | Credibility from Media Bias/Fact Check</sub>",
-            xaxis_title="Political Bias",
-            yaxis_title="Credibility Score",
-            xaxis=dict(range=[-5,5], zeroline=True),
-            yaxis=dict(range=[0,10], zeroline=True),
-            showlegend=False,
-            height=600,
-            width=900,
-            hovermode="closest", # Show hover for nearest point
-            annotations=[
-                # Add text box explaining symbols
-                dict(
-                    text="Circle = Known Bias (AllSides)<br>Diamond = Calculated Bias from Keywords</br>Dotted Line = Difference",
-                    xref="paper", yref="paper", # Position relative to plot area
-                    x=0.02, y=-0.98, # Top left corner
-                    showarrow=False,
-                    bgcolor="rgba(255,255,255,0.8)",
-                    bordercolor="gray",
-                    borderwidth=1,
-                    font=dict(size=10),
-                    align="left",
-                    xanchor="left",
-                    yanchor="top",
-                )
-            ]
-        )
-        return fig
+    # Configure overall chart layout
+    fig.update_layout(
+        title="Political Bias Comparison: Known vs Calculated </br><sub>Known bias from Allsides Media Bias Ratings | Credibility from Media Bias/Fact Check</sub>",
+        x=0.95,
+        y=0.5,
+        xanchor="center",
+        xaxis_title="Political Bias",
+        yaxis_title="Credibility Score",
+        xaxis=dict(range=[-5,5], zeroline=True),
+        yaxis=dict(range=[0,10], zeroline=True),
+        showlegend=False,
+        height=600,
+        width=900,
+        hovermode="closest", # Show hover for nearest point
+        annotations=[
+            # Add text box explaining symbols
+            dict(
+                text="Circle = Known Bias (AllSides)<br>Diamond = Calculated Bias from Keywords</br>Dotted Line = Difference",
+                xref="paper", yref="paper", # Position relative to plot area
+                x=0.02, y=-0.98, # Top left corner
+                showarrow=False,
+                bgcolor="rgba(255,255,255,0.8)",
+                bordercolor="gray",
+                borderwidth=1,
+                font=dict(size=10),
+                align="left",
+                xanchor="left",
+                yanchor="top",
+            )
+        ]
+    )
+    return fig
 
 # Display chart in browser
 def display_chart(fig):
