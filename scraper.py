@@ -1,7 +1,7 @@
 import requests
 from bs4 import BeautifulSoup
 import re
-from urllib.parse import urlparse
+from urllib.parse import urlparse, urljoin
 from config import MAX_CHARS, REQUEST_TIMEOUT, USER_AGENT, RATINGS, MBFC_CREDIBILITY
 from urllib.robotparser import RobotFileParser
 
@@ -63,8 +63,37 @@ def get_bias_cred(url):
     # If it cant be found then theres nothing to return
     return None
 
-# Scrape a single website
-def scrape1(url):
+# Get article links from a websites homepage
+def extract_article_links(url, soup, max_articles=7):
+    links = []
+    domain = getDomain(url)
+    parsed_url = urlparse(url)
+
+    for link in soup.find_all('a', href=True):
+        href = link['href']
+
+        # Convert relative urls to absolute
+        if href.startswith("/"):
+            href = urljoin(url, href)
+        elif not href.startswith("http"):
+            continue
+
+        # If link isn't from same domain, don't include it
+        article_indicators = [
+            "/article/", "/story/", "/news/", "/politics/",
+            "/opinion/", "/world/", "/us/", "/national/",
+            "/investigation/", "/analysis/", "/commentary/"
+        ]
+
+        if any(indicator in href.lower() for indicator in article_indicators):
+            if href not in links and "#" not in href:
+                links.append(href)
+                if len(links) >= max_articles:
+                    break
+    return links
+
+# Scrape a single article
+def scrape_article(url):
     try:
         # Here we have to set the User-Agent header to mimic a real browser or it might get blocked
         headers = {'User-Agent': USER_AGENT}
@@ -84,18 +113,65 @@ def scrape1(url):
                        for meaningful content
         nav: The nav bar is typically just meant for user navigation, no need
              to look there
+        aside: Used for content not related to article so no need for it
         """
-        for element in soup(["script", "style", "header", "footer", "nav"]):
+        for element in soup(["script", "style", "header", "footer", "nav", "aside"]):
             element.decompose()
 
-        # Extract and clean the text
-        text = soup.get_text()
-        # Replace whitespace with single spaces and remove leading/trailing whitespace also limit char
-        text = re.sub(r'\\s+',' ', text).strip()[:MAX_CHARS]
+        article_content = None
 
+        # Try multiple common HTML patterns in order to locate main content
+        article_selectors = [
+            soup.find("article"), # Article tag, used by most modern sites
+            soup.find("div", class_=re.compile(r"article|story|content", re.I)), # Div elements with article, story, or content class names
+            soup.find("div", id=re.compile(r"article|story|content", re.I)), # Div elements with IDs article, story, content
+        ]
+
+        for selector in article_selectors:
+            if selector:
+                article_content = selector
+                break
+        if article_content:
+            text = article_content.get_text()
+        # Fallback to all paragraphs
+        else:
+            paragraphs = soup.find_all("p")
+            text = " ".join([p.get_text() for p in paragraphs])
+
+        # Replace whitespace with single spaces and remove leading/trailing whitespace also limit char
+        text = re.sub(r'\s+',' ', text).strip()
         return text.lower()
+
     except Exception as e:
-        print(f"Error in scrape1 on website {url}: {e}")
+        print(f"Error in scrape article on website {url}: {e}")
+        return ""
+
+# Scrape homepage plus mutiple articles
+def scrape_multi_article(url, num_articles=7):
+    try:
+        headers = {'User-Agent': USER_AGENT}
+        response = requests.get(url, headers=headers, timeout=REQUEST_TIMEOUT)
+        response.raise_for_status()
+        soup = BeautifulSoup(response.content, 'html.parser')
+
+        # Get article links
+        article_links = extract_article_links(url, soup, max_articles=num_articles)
+        print(f"Found {len(article_links)} articles")
+
+        all_text = ""
+
+        # Scrape each article
+        for i, article_url in enumerate(article_links,1):
+            print(f"Scraping article {i}/{len(article_links)}")
+            article_text = scrape_article(article_url)
+            if article_text:
+                all_text += " " + article_text
+
+        # Increased text limit for multiple articles
+        return all_text[:MAX_CHARS * 10]
+
+    except Exception as e:
+        print(f"Error in scrape article on website {url}: {e}")
         return ""
 
 # Scrape multiple websites
@@ -109,6 +185,7 @@ def scrape_mutiple(websites):
             if not can_scrape(website):
                 print(f"Skipping {website}: Robots.txt disallows scraping")
                 continue
+
             bias_info = get_bias_cred(website)
 
             if bias_info is None:
@@ -117,7 +194,7 @@ def scrape_mutiple(websites):
                 continue
 
             # Scrape text
-            text = scrape1(website)
+            text = scrape_multi_article(website, num_articles=7)
 
             if text:
                 scraped_data[website] = {
@@ -125,5 +202,8 @@ def scrape_mutiple(websites):
                     'bias_info': bias_info
                 }
                 print(f"Rating found for {website}: {bias_info['rating']} Credibility: {bias_info['credibility']}/10")
+                print(f"  Collected {len(text)} characters of text")
+            else:
+                print(f"Failed to scrape any content")
 
     return scraped_data
