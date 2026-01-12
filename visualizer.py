@@ -3,7 +3,7 @@ import plotly.graph_objs as go
 # This created hover text for whenever you go over a data point
 def create_hover_text(result):
     hover_text = f"<b>{result["name"]}</b></br>"
-    hover_text += f"Rating: {result["rating"]}</br>"
+    hover_text += f"Rating: {result["bias_rating"]}</br>"
     hover_text += f"Known Bias: {result["known_bias"]}</br>"
     hover_text += f"Calculated Bias: {result["calculated_bias"]}</br>"
     hover_text += f"Credibility: {result["reliability"]}</br>"
@@ -61,7 +61,7 @@ def create_bias_chart(results):
         # Add dotted line connecting known and calculated bias
         fig.add_trace(go.Scatter(
             x=[result["known_bias"], result["calculated_bias"]], # Start and end points
-            y=[result["reliability"], result["reliabilty"]], # Y stays the same
+            y=[result["reliability"], result["reliability"]], # Y stays the same
             mode="lines", # Only show the line, no need for markers
             line=dict(
                 color="rgba(100, 100, 100, 0.4)",
@@ -73,18 +73,20 @@ def create_bias_chart(results):
         ))
 
         # Add diamond marker for calculated bias position
-        x=[result["calculated_bias"]], # Position from keyword analysis
-        y=[result["reliability"]],
-        mode="markers",
-        marker=dict(
-            size=10,
-            color=result["calculated_bias"],
-            colorscale="RdBu_r",
-            cmin=-5,
-            cmax=5,
-            symbol="diamond",
-            line=dict(width=2, color="white"),
-        )
+        fig.add_trace(go.Scatter(
+            x=[result["calculated_bias"]], # Position from keyword analysis
+            y=[result["reliability"]],
+            mode="markers",
+            marker=dict(
+                size=10,
+                color=result["calculated_bias"],
+                colorscale="RdBu_r",
+                cmin=-5,
+                cmax=5,
+                symbol="diamond",
+                line=dict(width=2, color="white"),
+            )
+        ))
 
         # Adds vertical line at x=0 to display center
         fig.add_vline(x=0, line_dash="dash", line_color="gray", opacity=0.5)
