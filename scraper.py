@@ -108,6 +108,7 @@ def scrape_mutiple(websites):
             # Check robots.txt for scraping permissions
             if not can_scrape(website):
                 print(f"Skipping {website}: Robots.txt disallows scraping")
+                continue
             bias_info = get_bias_cred(website)
 
             if bias_info is None:
@@ -125,4 +126,4 @@ def scrape_mutiple(websites):
                 }
                 print(f"Rating found for {website}: {bias_info['rating']} Credibility: {bias_info['credibility']}/10")
 
-            return scraped_data
+    return scraped_data
