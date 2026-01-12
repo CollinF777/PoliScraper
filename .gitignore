@@ -208,3 +208,6 @@ __marimo__/
 
 *.xml
 *.iml
+
+# Output
+political_bias_chart.html
