@@ -10,10 +10,10 @@ def analyze_keywords(text):
         for keyword in keywords:
             """
             This is a regex pattern that is meant to match the keyword as the entire word
-            The \\b is a word boundary so the word cant be matched inside other words
+            The \b is a word boundary so the word cant be matched inside other words
             re.escape(keyword) escapes special regex characters in the keyword
             """
-            pattern = r'\\b' + re.escape(keyword) + r'\\b'
+            pattern = r'\b' + re.escape(keyword) + r'\b'
             count = len(re.findall(pattern, text))
 
             if count > 0:
@@ -75,5 +75,5 @@ def print_results(results):
         print(f"Difference: {agreement}")
         print(f"Credibility: {result['reliability']}/10")
         print(f"Keyword counts - Left: {result["scores"]["left"]}",
-              "Center: {result['scores']['center']}",
-              "Right: {result['scores']['right']}")
+              f"Center: {result['scores']['center']}",
+              f"Right: {result['scores']['right']}")
