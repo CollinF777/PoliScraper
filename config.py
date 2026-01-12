@@ -1,24 +1,23 @@
 # Keywords we are using to find bias
 KEYWORDS = {
     "left": [
-        "progressive", "liberal", "pro-choice", "medicare for all", "wealth tax",
-        "climate justice", "racial justice", "equity", "union rights", "living wage",
-        "gun control", "environmental regulation", "public healthcare", "social programs",
-        "immigrant rights", "reproductive rights", "communism", "socialism"
+        "progressive", "liberal", "abortion rights", "reproductive rights",
+        "climate justice", "racial justice", "equity", "systemic racism",
+        "gun control", "gun reform", "universal healthcare", "medicare for all",
+        "lgbtq rights", "transgender rights", "immigration reform", "pathway to citizenship",
+        "social programs", "wealth tax", "corporate tax", "unions", "labor rights",
+        "renewable energy", "green new deal", "police reform", "defund"
     ],
-
     "center": [
-        "bipartisan", "moderate", "centrist", "pragmatic", "compromise",
-        "fiscal moderation", "middle ground", "incremental reform",
-        "independent", "nonpartisan", "evidence-based policy",
-        "both sides"
+        "bipartisan", "moderate", "centrist", "compromise", "consensus",
+        "independent", "nonpartisan", "both sides", "balanced approach"
     ],
-
     "right": [
-        "conservative", "traditional values", "pro-life", "trad", "conservatism",
-        "free market", "limited government", "tax cuts", "deregulation",
-        "second amendment", "border security", "law and order", "patriotism",
-        "family values", "strong defense", "fiscal conservatism", "america first"
+        "conservative", "traditional values", "pro-life", "unborn",
+        "second amendment", "gun rights", "border security", "illegal aliens",
+        "law and order", "back the blue", "deregulation", "free market",
+        "tax cuts", "small government", "religious freedom", "parental rights",
+        "school choice", "america first", "patriot", "sovereignty"
     ]
 }
 
@@ -106,6 +105,6 @@ MBFC_CREDIBILITY = {
 }
 
 # Some scraping settings for our program
-MAX_CHARS = 10000
+MAX_CHARS = 100000
 REQUEST_TIMEOUT = 10
 USER_AGENT = 'PoliScraper/1.0 (+https://github.com/CollinF777/PoliScraper)'
