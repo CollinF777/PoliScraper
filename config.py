@@ -15,7 +15,7 @@ KEYWORDS = {
     ],
 
     "right": [
-        "conservative", "traditional values", "pro-life", "trad", "conservatism"
+        "conservative", "traditional values", "pro-life", "trad", "conservatism",
         "free market", "limited government", "tax cuts", "deregulation",
         "second amendment", "border security", "law and order", "patriotism",
         "family values", "strong defense", "fiscal conservatism", "america first"
