@@ -28,13 +28,13 @@ def adjust_label_pos(results):
         # Find if this position is close to an already existing group
         added = False
         for group in position_groups:
-            if any(abs(pos[0] -p[0]) < p[0] and abs(pos[1] - p[1]) < 1.0 for p in [r["pos"] for r in group]):
+            if any(abs(pos[0] -p[0]) < 1.0 and abs(pos[1] - p[1]) < 1.0 for p in [r["pos"] for r in group]):
                 group.append({"result": result, "pos": pos})
                 added = True
                 break
 
-            if not added:
-                position_groups.append([{"result": result, "pos": pos}])
+        if not added:
+            position_groups.append([{"result": result, "pos": pos}])
     # Assign offsets to items in each group
     for group in position_groups:
         if len(group) == 1:
