@@ -2,6 +2,8 @@
 
 A Python-based tool for analyzing political bias in news media through keyword analysis and web scraping. PoliScraper compares calculated bias scores (derived from content analysis) against established ratings from AllSides and credibility scores from Media Bias/Fact Check.
 
+<img width="1305" height="794" alt="image" src="https://github.com/user-attachments/assets/56caf4ad-3fc7-45b1-9493-cddd594bd01e" />
+
 ## Features
 
 - **Multi-Source Analysis**: Scrapes content from 19 major news outlets
